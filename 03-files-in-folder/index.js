@@ -11,7 +11,7 @@ const readFiles = function() {
                 let {name} = file;
                 let ext = path.extname(name);
                 let size = fs.statSync(path.join(__dirname, 'secret-folder', name)).size / 1024;
-                console.log(name + ' - ' + ext+ ' - ' + size + 'kb');
+                console.log(`${name} -  ${ext} - ${size}kb`);
             }
         })
     }

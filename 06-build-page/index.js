@@ -9,7 +9,7 @@ const checkFolderAccess = async function() {
   } catch(error) {
     // Don't show error when folder hasnt been created yet
   }
-  createPage();
+  await createPage();
 };
 checkFolderAccess();
 
@@ -19,10 +19,10 @@ const createPage = async function() {
     let htmlfile = await fsP.readFile(path.join(__dirname, 'template.html'), 'utf-8');
     const reg = /{{(.*?)}}/g;
     const files = Array.from(htmlfile.matchAll(reg), match => match[1]);
-    files.forEach(elem => {
-      const component = fsP.readFile(path.join(__dirname, 'components', `${elem}`), 'utf-8');
+    for (const elem of files) {
+      const component = await fsP.readFile(path.join(__dirname, 'components', `${elem}.html`), 'utf-8');
       htmlfile = htmlfile.replace(`{{${elem}}}`, component);
-    });
+    }
     await fsP.writeFile(path.join(__dirname, 'project-dist', 'index.html'), htmlfile);
     await mergeStyles();
     await copyFiles(path.join(__dirname, 'assets'), path.join(__dirname, 'project-dist', 'assets'));

@@ -1,8 +1,9 @@
 const fs = require('fs');
+const fsP = require('fs/promises');
 const path = require('path');
 
-const readFiles = function() {
-    fs.readdir(path.join(__dirname, 'secret-folder'), {withFileTypes:true}, (err, files) => {
+const readFiles = async function() {
+    await fs.readdir(path.join(__dirname, 'secret-folder'), {withFileTypes:true}, (err, files) => {
     if (err) {
         throw err;
     } else {
@@ -10,8 +11,10 @@ const readFiles = function() {
             if (file.isFile()) {
                 let {name} = file;
                 let ext = path.extname(name);
-                let size = fs.statSync(path.join(__dirname, 'secret-folder', name)).size / 1024;
-                console.log(`${name} -  ${ext} - ${size}kb`);
+                fs.stat(path.join(__dirname, 'secret-folder', name), (err, stats) => {
+                    let size = stats.size / 1024;
+                    console.log(`${name} -  ${ext} - ${size}kb`);
+                });
             }
         })
     }

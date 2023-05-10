@@ -2,13 +2,18 @@ const fs = require('fs');
 const fsP = require('fs/promises');
 const path = require('path');
 
-const createPage = async function() {
+const checkFolderAccess = async function() {
   try {
     await fsP.access(path.join(__dirname, 'project-dist'));
     await fsP.rm(path.join(__dirname, 'project-dist'), { recursive: true });
   } catch(error) {
-    console.log(error.message);
+    // Don't show error when folder hasnt been created yet
   }
+  createPage();
+};
+checkFolderAccess();
+
+const createPage = async function() {
   try {
     await fsP.mkdir(path.join(__dirname, 'project-dist'));
     let htmlfile = await fsP.readFile(path.join(__dirname, 'template.html'), 'utf-8');
@@ -25,8 +30,6 @@ const createPage = async function() {
     console.log(error.message);
   }
 };
-createPage();
-
 const mergeStyles = async function() {
   const allFiles = await fsP.readdir(path.resolve(__dirname, 'styles'));
   allFiles.forEach(file => {
